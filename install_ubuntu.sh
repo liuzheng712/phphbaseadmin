@@ -10,13 +10,13 @@ sudo apt-get install lamp-server^ -y
 
 
 sudo pip install cherrypy
-#sudo pip install cherrypy
+sudo pip install kazoo
 #sudo pip install cherrypy
 #sudo pip install cherrypy
 
 cd /var/www/html
 sudo git clone https://github.com/liuzheng712/phphbaseadmin --depth 1
-sudo chown www-data\: phpbaseadmin -R
+sudo chown www-data\: phphbaseadmin -R
 cd phphbaseadmin/cherrypy
 python2 zookeeperadmin.py start
 echo "All done.open http://your_ip/phphbaseadmin from your web browser"
