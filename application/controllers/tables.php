@@ -25,21 +25,23 @@ class Tables extends CI_Controller
     
     public function Gethbaseinfo()
     {
-       $this->load->model('hbase_table_model', 'table'); 
-       $queryinfo="hadoop:service=HBase,name=Info";
-       $hbaseinfo =$this->table->get_hbase_info($queryinfo);
-       $hbasedata=json_decode($hbaseinfo,true);       
-       $data['version']=$hbasedata['beans'][0]['version'].', r'.$hbasedata['beans'][0]['revision'];
-       $queryname="hadoop:service=Master,name=Master";
+       $this->load->model('hbase_table_model', 'table');
+
+       //$queryinfo="hadoop:service=HBase,name=Info";
+       //$hbaseinfo =$this->table->get_hbase_info($queryinfo);
+       //$hbasedata=json_decode($hbaseinfo,true);
+       //$data['version']=$hbasedata['beans'][0]['version'].', r'.$hbasedata['beans'][0]['revision'];
+       $queryname="Hadoop:service=HBase,name=Master,sub=Server";
        $hbasename =$this->table->get_hbase_info($queryname);
        $hbasedata=json_decode($hbasename,true);
-       $data['ServerName']=explode(",",$hbasedata['beans'][0]["ServerName"]);
-       $data['ZookeeperQuorum']=$hbasedata['beans'][0]["ZookeeperQuorum"];
-       $data['DeadRegionServers']=$hbasedata['beans'][0]["DeadRegionServers"];
-       $data['AverageLoad']=$hbasedata['beans'][0]['AverageLoad'];
-       $data['MasterStartTime']=round($hbasedata['beans'][0]["MasterStartTime"]/1000, 0);
-       $data["live_regionservers"] = count($hbasedata['beans'][0]["RegionServers"]);
-       $data["Coprocessors"]=$hbasedata['beans'][0]["Coprocessors"]; 
+       $data['ServerName']=explode(",",$hbasedata['beans'][0]["tag.serverName"]);
+       $data['ZookeeperQuorum']=$hbasedata['beans'][0]["tag.zookeeperQuorum"];
+       $data['DeadRegionServers']=$hbasedata['beans'][0]["tag.deadRegionServers"];
+       $data['AverageLoad']=$hbasedata['beans'][0]['averageLoad'];
+       $data['MasterStartTime']=round($hbasedata['beans'][0]["masterStartTime"]/1000, 0);
+       $data["live_regionservers"] = count($hbasedata['beans'][0]["tag.liveRegionServers"]);
+
+       //$data["Coprocessors"]=$hbasedata['beans'][0]["Coprocessors"];
        
         $this->load->view('table_admin', $data); 
     }
@@ -282,32 +284,32 @@ class Tables extends CI_Controller
         $columns=explode(",",$columns);
         $data['column']=$columns[0]; 
         $this->load->model('hbase_table_model', 'table');
-        $query= 'hadoop:service=Master,name=Master';
+        $query= 'Hadoop:service=HBase,name=Master,sub=Server';
         $hbaseinfo =$this->table->get_hbase_info($query);
         $hbaseinfo=json_decode($hbaseinfo,true);
         $table_size=0;
         $readRequestsCount=0;
         $requestsCount=0;
         $writeRequestsCount=0;      
-        foreach($hbaseinfo['beans'][0]['RegionServers'] as $regionkey=>$regionvalue)
-         {
-            $regionserver=explode(',',$regionvalue['key']);
-            $regionload=$regionvalue['value']['regionsLoad'];
-            foreach($regionload as $regionbean)
-             {
-                $regiontb=$regionbean['value']['nameAsString'];
-                $regiontbnamearr=explode(',',$regiontb);
-                $regiontbname=$regiontbnamearr[0];
-                if($regiontbname==$table_name)
-                 {
-                    $table_size+=$regionbean['value']['storefileSizeMB'];
-                    $readRequestsCount+=$regionbean['value']['readRequestsCount'];
-                    $requestsCount+=$regionbean['value']['requestsCount'];
-                    $writeRequestsCount+=$regionbean['value']['writeRequestsCount'];
-                 }
-                
-             }
-         } 
+        //foreach($hbaseinfo['beans'][0]['tag.liveRegionServers'] as $regionkey=>$regionvalue)
+        // {
+        //    $regionserver=explode(',',$regionvalue['key']);
+        //    $regionload=$regionvalue['value']['regionsLoad'];
+        //    foreach($regionload as $regionbean)
+        //     {
+        //        $regiontb=$regionbean['value']['nameAsString'];
+        //        $regiontbnamearr=explode(',',$regiontb);
+        //        $regiontbname=$regiontbnamearr[0];
+        //        if($regiontbname==$table_name)
+        //         {
+        //            $table_size+=$regionbean['value']['storefileSizeMB'];
+        //            $readRequestsCount+=$regionbean['value']['readRequestsCount'];
+        //            $requestsCount+=$regionbean['value']['requestsCount'];
+        //            $writeRequestsCount+=$regionbean['value']['writeRequestsCount'];
+        //         }
+        //
+        //     }
+        // }
                  
         $data['storefileSizeMB']=$this->size_readify($table_size);
         //if($table_size>1024)

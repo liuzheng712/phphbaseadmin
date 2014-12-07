@@ -21,17 +21,17 @@
       <td>ServerName</td>
       <td><?php echo $ServerName[0]?> ,<?php echo $ServerName[1]?></td>
     </tr>
-    <tr>
+    <!--<tr>
       <td>version</td>
       <td><?php echo($version)?></td>
-    </tr>
+    </tr>-->
     <tr>
       <td>zookeeper_quorum</td>
       <td><?php echo($ZookeeperQuorum)?></td>
     </tr>
     <tr>
       <td>DeadRegionServers</td>
-      <td><?php echo implode(' ;',$DeadRegionServers)?> </td>
+      <td><?php echo($DeadRegionServers)?> </td>
     </tr>
     <tr>
       <td>AverageLoad</td>
@@ -45,10 +45,10 @@
       <td>live_regionservers</td>
       <td><?php echo $live_regionservers?> </td>
     </tr>
-    <tr>
+    <!--<tr>
       <td>Coprocessors</td>
       <td><?php echo implode('',$Coprocessors)?> </td>
-    </tr>
+    </tr>-->
   </tbody>   
    </table>
 </div>
